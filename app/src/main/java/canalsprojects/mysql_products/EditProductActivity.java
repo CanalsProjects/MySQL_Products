@@ -40,13 +40,13 @@ public class EditProductActivity extends Activity {
     JSONParser jsonParser = new JSONParser();
 
     // single product url
-    private static final String url_product_detials = "http://api.androidhive.info/android_connect/get_product_details.php";
+    private static final String url_product_detials = "http://bd.mumus.es/get_product_details.php";
 
     // url to update product
-    private static final String url_update_product = "http://api.androidhive.info/android_connect/update_product.php";
+    private static final String url_update_product = "http://bd.mumus.es/update_product.php";
 
     // url to delete product
-    private static final String url_delete_product = "http://api.androidhive.info/android_connect/delete_product.php";
+    private static final String url_delete_product = "http://bd.mumus.es/delete_product.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
