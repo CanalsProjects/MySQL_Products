@@ -21,6 +21,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 public class EditProductActivity extends Activity {
 
@@ -40,7 +43,7 @@ public class EditProductActivity extends Activity {
     JSONParser jsonParser = new JSONParser();
 
     // single product url
-    private static final String url_product_detials = "http://bd.mumus.es/get_product_details.php";
+    private static final String url_product_details = "http://bd.mumus.es/get_product_details.php";
 
     // url to update product
     private static final String url_update_product = "http://bd.mumus.es/update_product.php";
@@ -56,9 +59,11 @@ public class EditProductActivity extends Activity {
     private static final String TAG_PRICE = "price";
     private static final String TAG_DESCRIPTION = "description";
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.edit_product);
 
         // save button
@@ -117,55 +122,52 @@ public class EditProductActivity extends Activity {
         /**
          * Getting product details in background thread
          * */
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String... args) {
 
             // updating UI from Background Thread
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    // Check for success tag
-                    int success;
-                    try {
-                        // Building Parameters
-                        List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("pid", pid));
+            // Check for success tag
+            int success;
 
-                        // getting product details by making HTTP request
-                        // Note that product details url will use GET request
-                        JSONObject json = jsonParser.makeHttpRequest(
-                                url_product_detials, "GET", params);
+            try {
+                // Building Parameters
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("pid", pid));
 
-                        // check your log for json response
-                        Log.d("Single Product Details", json.toString());
+                // getting product details by making HTTP request
+                // Note that product details url will use GET request
+                JSONObject json = jsonParser.makeHttpRequest(url_product_details, "GET", params);
 
-                        // json success tag
-                        success = json.getInt(TAG_SUCCESS);
-                        if (success == 1) {
-                            // successfully received product details
-                            JSONArray productObj = json
-                                    .getJSONArray(TAG_PRODUCT); // JSON Array
+                // check your log for json response
+                Log.d("Single Product Details", json.toString());
 
-                            // get first product object from JSON Array
-                            JSONObject product = productObj.getJSONObject(0);
+                // json success tag
+                success = json.getInt(TAG_SUCCESS);
+                if (success == 1) {
+                    // successfully received product details
+                    JSONArray productObj = json.getJSONArray(TAG_PRODUCT); // JSON Array
 
-                            // product with this pid found
-                            // Edit Text
-                            txtName = (EditText) findViewById(R.id.inputName);
-                            txtPrice = (EditText) findViewById(R.id.inputPrice);
-                            txtDesc = (EditText) findViewById(R.id.inputDesc);
+                    // get first product object from JSON Array
+                    JSONObject product = productObj.getJSONObject(0);
 
-                            // display product data in EditText
-                            txtName.setText(product.getString(TAG_NAME));
-                            txtPrice.setText(product.getString(TAG_PRICE));
-                            txtDesc.setText(product.getString(TAG_DESCRIPTION));
+                    // product with this pid found
+                    // Edit Text
+                    //TODO: Esto hay que sacarlo de aqui
+                    txtName = (EditText) findViewById(R.id.inputName);
+                    txtPrice = (EditText) findViewById(R.id.inputPrice);
+                    txtDesc = (EditText) findViewById(R.id.inputDesc);
 
-                        }else{
-                            // product with pid not found
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    // display product data in EditText
+                    txtName.setText(product.getString(TAG_NAME));
+                    txtPrice.setText(product.getString(TAG_PRICE));
+                    txtDesc.setText(product.getString(TAG_DESCRIPTION));
+
+                }else{
+                    // product with pid not found
                 }
-            });
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             return null;
         }
@@ -176,6 +178,14 @@ public class EditProductActivity extends Activity {
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once got all details
             pDialog.dismiss();
+            // updating UI from Background Thread
+            runOnUiThread(new Runnable(){
+                @Override
+                public void run(){
+                    // change UI elements here
+                    Toast.makeText(EditProductActivity.this, "Done!", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -216,8 +226,7 @@ public class EditProductActivity extends Activity {
 
             // sending modified data through http request
             // Notice that update product url accepts POST method
-            JSONObject json = jsonParser.makeHttpRequest(url_update_product,
-                    "POST", params);
+            JSONObject json = jsonParser.makeHttpRequest(url_update_product, "POST", params);
 
             // check json success tag
             try {
