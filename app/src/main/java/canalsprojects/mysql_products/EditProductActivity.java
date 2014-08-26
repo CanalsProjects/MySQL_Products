@@ -59,6 +59,7 @@ public class EditProductActivity extends Activity {
     private static final String TAG_PRICE = "price";
     private static final String TAG_DESCRIPTION = "description";
 
+    private String productName, productPrice, productDescription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,15 +152,9 @@ public class EditProductActivity extends Activity {
 
                     // product with this pid found
                     // Edit Text
-                    //TODO: Esto hay que sacarlo de aqui
-                    txtName = (EditText) findViewById(R.id.inputName);
-                    txtPrice = (EditText) findViewById(R.id.inputPrice);
-                    txtDesc = (EditText) findViewById(R.id.inputDesc);
-
-                    // display product data in EditText
-                    txtName.setText(product.getString(TAG_NAME));
-                    txtPrice.setText(product.getString(TAG_PRICE));
-                    txtDesc.setText(product.getString(TAG_DESCRIPTION));
+                    productName = product.getString(TAG_NAME);
+                    productPrice = product.getString(TAG_PRICE);
+                    productDescription = product.getString(TAG_DESCRIPTION);
 
                 }else{
                     // product with pid not found
@@ -183,7 +178,15 @@ public class EditProductActivity extends Activity {
                 @Override
                 public void run(){
                     // change UI elements here
-                    Toast.makeText(EditProductActivity.this, "Done!", Toast.LENGTH_SHORT).show();
+                    txtName = (EditText) findViewById(R.id.inputName);
+                    txtPrice = (EditText) findViewById(R.id.inputPrice);
+                    txtDesc = (EditText) findViewById(R.id.inputDesc);
+
+                    // display product data in EditText
+                    txtName.setText(productName);
+                    txtPrice.setText(productPrice);
+                    txtDesc.setText(productDescription);
+                    //Toast.makeText(EditProductActivity.this, "Done!", Toast.LENGTH_SHORT).show();
                 }
             });
         }
