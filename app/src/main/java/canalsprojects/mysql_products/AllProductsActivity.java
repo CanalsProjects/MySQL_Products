@@ -198,7 +198,7 @@ public class AllProductsActivity extends ListActivity {
                     /**
                      * Updating parsed JSON data into ListView
                      * */
-                    ListAdapter adapter = new SimpleAdapter(
+                    ListAdapter adapter = new CustomListAdapter(
                             AllProductsActivity.this,
                             productsList,
                             R.layout.list_item,

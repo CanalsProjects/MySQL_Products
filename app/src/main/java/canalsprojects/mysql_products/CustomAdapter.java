@@ -21,11 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CustomAdapter extends ArrayAdapter<String> {
-    private final Context context;
-    private final int resource;
-    private final List<HashMap<String, String>> data;
-    private final String[] from;
-    private final int[] to;
+    private Context context;
+    private int resource;
+    private List<HashMap<String, String>> data;
+    private String[] from;
+    private int[] to;
 
     public CustomAdapter(Context context, List<HashMap<String, String>> data,
                          int resource, String[] from, int[] to) {
@@ -42,8 +42,11 @@ public class CustomAdapter extends ArrayAdapter<String> {
 
         HashMap<String, String> map = (HashMap) this.data.get(position);
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(resource, parent, false);
+        View rowView = convertView;
+        if(rowView==null){
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(resource, parent, false);
+        }
 
         TextView pid = (TextView) rowView.findViewById(to[0]);
         pid.setText(map.get(from[0]));
