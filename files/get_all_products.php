@@ -29,7 +29,9 @@ if (mysql_num_rows($result) > 0) {
         $product = array();
         $product["pid"] = $row["pid"];
         $product["name"] = $row["name"];
+		$product["img"] = $row["img"];
         $product["price"] = $row["price"];
+		$product["description"] = $row["description"];
         $product["created_at"] = $row["created_at"];
         $product["updated_at"] = $row["updated_at"];
  
