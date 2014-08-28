@@ -81,19 +81,8 @@ public class CustomListAdapter extends BaseAdapter {
         TextView description = (TextView) convertView.findViewById(to[3]);
         description.setText(map.get(from[3]));
 
-
         ImageView img = (ImageView) convertView.findViewById(to[4]);
         new DownloadImageTask((ImageView) convertView.findViewById(R.id.thumbnail)).execute(map.get(from[4]));
-
-        /*try{
-            ImageView img = (ImageView) convertView.findViewById(R.id.thumbnail);
-            Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(map.get(from[4])).getContent());
-            img.setImageBitmap(bitmap);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
         return convertView;
     }

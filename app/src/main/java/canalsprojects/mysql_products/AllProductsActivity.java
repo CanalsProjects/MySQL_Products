@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +21,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
@@ -48,9 +50,12 @@ public class AllProductsActivity extends ListActivity {
     private static final String TAG_IMG = "img";
     private static final String TAG_PRICE = "price";
     private static final String TAG_DESCRIPTION = "description";
+    private static final String TAG_START = "start";
+    private static final String TAG_END = "end";
 
     // products JSONArray
     JSONArray products = null;
+    boolean loadinfInfo = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +66,7 @@ public class AllProductsActivity extends ListActivity {
         productsList = new ArrayList<HashMap<String, String>>();
 
         // Loading products in Background Thread
-        new LoadAllProducts().execute();
+        new LoadAllProducts().execute(0);
 
         // Get listview
         ListView lv = getListView();
@@ -89,6 +94,22 @@ public class AllProductsActivity extends ListActivity {
             }
         });
 
+        lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int lastItem = firstVisibleItem + visibleItemCount;
+                if ((lastItem == totalItemCount) && (totalItemCount!=0) && !loadinfInfo) {
+                    Log.d(String.valueOf(lastItem), "Last Item");
+                    new LoadAllProducts().execute(lastItem);
+                }
+            }
+        });
+
     }
 
     // Response from Edit Product Activity
@@ -110,13 +131,14 @@ public class AllProductsActivity extends ListActivity {
     /**
      * Background Async Task to Load all product by making HTTP Request
      * */
-    class LoadAllProducts extends AsyncTask<String, String, String> {
+    class LoadAllProducts extends AsyncTask<Integer, String, String> {
 
         /**
          * Before starting background thread Show Progress Dialog
          * */
         @Override
         protected void onPreExecute() {
+            loadinfInfo = true;
             super.onPreExecute();
             pDialog = new ProgressDialog(AllProductsActivity.this);
             pDialog.setMessage("Loading products. Please wait...");
@@ -128,9 +150,12 @@ public class AllProductsActivity extends ListActivity {
         /**
          * getting All products from url
          * */
-        protected String doInBackground(String... args) {
+        protected String doInBackground(Integer... args) {
             // Building Parameters
             List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair(TAG_START, args[0].toString()));
+            Integer end = args[0]+10;
+            params.add(new BasicNameValuePair(TAG_END, end.toString()));
             // getting JSON string from URL
             JSONObject json = jParser.makeHttpRequest(url_all_products, "GET", params);
 
@@ -170,7 +195,7 @@ public class AllProductsActivity extends ListActivity {
                         // adding HashList to ArrayList
                         productsList.add(map);
                     }
-                } else {
+                } /*else {
                     // no products found
                     // Launch Add New product Activity
                     Intent i = new Intent(getApplicationContext(),
@@ -178,7 +203,7 @@ public class AllProductsActivity extends ListActivity {
                     // Closing all previous activities
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
-                }
+                }*/
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -209,7 +234,8 @@ public class AllProductsActivity extends ListActivity {
                 }
             });
 
-        }
+            loadinfInfo = false;
 
+        }
     }
 }
