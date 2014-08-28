@@ -5,7 +5,6 @@ package canalsprojects.mysql_products;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -24,9 +23,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class AllProductsActivity extends ListActivity {
@@ -36,8 +33,7 @@ public class AllProductsActivity extends ListActivity {
 
     // Creating JSON Parser object
     JSONParser jParser = new JSONParser();
-
-    ArrayList<HashMap<String, String>> productsList;
+    CustomArrayAdapter adapter;
 
     // url to get all products list
     private static String url_all_products = "http://bd.mumus.es/get_all_products.php";
@@ -45,25 +41,18 @@ public class AllProductsActivity extends ListActivity {
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_PRODUCTS = "products";
-    private static final String TAG_PID = "pid";
-    private static final String TAG_NAME = "name";
-    private static final String TAG_IMG = "img";
-    private static final String TAG_PRICE = "price";
-    private static final String TAG_DESCRIPTION = "description";
     private static final String TAG_START = "start";
     private static final String TAG_END = "end";
 
     // products JSONArray
     JSONArray products = null;
-    boolean loadinfInfo = false;
+    boolean loadingInfo = false;
+    boolean MoreInfo = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_products);
-
-        // Hashmap for ListView
-        productsList = new ArrayList<HashMap<String, String>>();
 
         // Loading products in Background Thread
         new LoadAllProducts().execute(0);
@@ -87,7 +76,7 @@ public class AllProductsActivity extends ListActivity {
                         EditProductActivity.class);
 
                 // sending pid to next activity
-                in.putExtra(TAG_PID, pid);
+                in.putExtra("pid", pid);
 
                 // starting new activity and expecting some response back
                 startActivityForResult(in, 100);
@@ -103,7 +92,7 @@ public class AllProductsActivity extends ListActivity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int lastItem = firstVisibleItem + visibleItemCount;
-                if ((lastItem == totalItemCount) && (totalItemCount!=0) && !loadinfInfo) {
+                if ((lastItem == totalItemCount) && (totalItemCount!=0) && !loadingInfo && MoreInfo) {
                     Log.d(String.valueOf(lastItem), "Last Item");
                     new LoadAllProducts().execute(lastItem);
                 }
@@ -131,15 +120,21 @@ public class AllProductsActivity extends ListActivity {
     /**
      * Background Async Task to Load all product by making HTTP Request
      * */
-    class LoadAllProducts extends AsyncTask<Integer, String, String> {
+    class LoadAllProducts extends AsyncTask<Integer, String, Integer> {
+
+        ArrayList<Product> productsList;
 
         /**
          * Before starting background thread Show Progress Dialog
          * */
         @Override
         protected void onPreExecute() {
-            loadinfInfo = true;
             super.onPreExecute();
+
+            loadingInfo = true;
+            // Hashmap for ListView
+            productsList = new ArrayList<Product>();
+
             pDialog = new ProgressDialog(AllProductsActivity.this);
             pDialog.setMessage("Loading products. Please wait...");
             pDialog.setIndeterminate(false);
@@ -150,12 +145,15 @@ public class AllProductsActivity extends ListActivity {
         /**
          * getting All products from url
          * */
-        protected String doInBackground(Integer... args) {
+        protected Integer doInBackground(Integer... args) {
             // Building Parameters
+            int start = args[0];
+            int end = start+10;
+
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair(TAG_START, args[0].toString()));
-            Integer end = args[0]+10;
-            params.add(new BasicNameValuePair(TAG_END, end.toString()));
+
+            params.add(new BasicNameValuePair(TAG_END, String.valueOf(end)));
             // getting JSON string from URL
             JSONObject json = jParser.makeHttpRequest(url_all_products, "GET", params);
 
@@ -174,67 +172,39 @@ public class AllProductsActivity extends ListActivity {
                     // looping through All Products
                     for (int i = 0; i < products.length(); i++) {
                         JSONObject c = products.getJSONObject(i);
-
-                        // Storing each json item in variable
-                        String id = c.getString(TAG_PID);
-                        String name = c.getString(TAG_NAME);
-                        String img = c.getString(TAG_IMG);
-                        String price = c.getString(TAG_PRICE);
-                        String description = c.getString(TAG_DESCRIPTION);
-
-                        // creating new HashMap
-                        HashMap<String, String> map = new HashMap<String, String>();
-
-                        // adding each child node to HashMap key => value
-                        map.put(TAG_PID, id);
-                        map.put(TAG_NAME, name);
-                        map.put(TAG_IMG, img);
-                        map.put(TAG_PRICE, price);
-                        map.put(TAG_DESCRIPTION, description);
-
-                        // adding HashList to ArrayList
-                        productsList.add(map);
+                        Product product = new Product(c);
+                        productsList.add(product);
                     }
-                } /*else {
-                    // no products found
-                    // Launch Add New product Activity
-                    Intent i = new Intent(getApplicationContext(),
-                            NewProductActivity.class);
-                    // Closing all previous activities
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-                }*/
+                } else {
+                    MoreInfo = false;
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
+                MoreInfo = false;
             }
 
-            return null;
+            return start;
         }
 
         /**
          * After completing background task Dismiss the progress dialog
          * **/
-        protected void onPostExecute(String file_url) {
+        protected void onPostExecute(final Integer lastItem) {
             // dismiss the dialog after getting all products
             pDialog.dismiss();
             // updating UI from Background Thread
             runOnUiThread(new Runnable() {
                 public void run() {
-                    /**
-                     * Updating parsed JSON data into ListView
-                     * */
-                    ListAdapter adapter = new CustomListAdapter(
-                            AllProductsActivity.this,
-                            productsList,
-                            R.layout.list_item,
-                            new String[] { TAG_PID, TAG_NAME, TAG_PRICE, TAG_DESCRIPTION, TAG_IMG},
-                            new int[] { R.id.pid, R.id.name, R.id.price, R.id.description, R.id.thumbnail });
-                    // updating listview
-                    setListAdapter(adapter);
+                    if (lastItem == 0) {
+                        adapter = new CustomArrayAdapter(AllProductsActivity.this, R.layout.list_item, productsList);
+                        setListAdapter(adapter);
+                    } else {
+                        adapter.addAll(productsList);
+                    }
                 }
             });
 
-            loadinfInfo = false;
+            loadingInfo = false;
 
         }
     }
