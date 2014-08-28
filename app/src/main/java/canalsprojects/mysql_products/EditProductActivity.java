@@ -21,9 +21,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 public class EditProductActivity extends Activity {
 
