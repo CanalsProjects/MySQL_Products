@@ -51,6 +51,7 @@ public class AllProductsActivity extends ListActivity {
     JSONArray products = null;
     boolean loadingInfo = false;
     boolean MoreInfo = true;
+    //View loadMoreView;
 
 
     @Override
@@ -58,15 +59,18 @@ public class AllProductsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_products);
 
-        // Loading products in Background Thread
+        // Loading products in List view
         new LoadAllProducts().execute(0);
 
         // Get listview
         ListView lv = getListView();
 
         //add the footer before adding the adapter, else the footer will not load!
-        //View footerView = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.footer, null, false);
-        //lv.addFooterView(footerView);
+        //loadMoreView = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_footer, null, false);
+        //lv.addFooterView(loadMoreView);
+
+        //enables filtering for the contents of the given ListView
+        lv.setTextFilterEnabled(true);
 
         // on seleting single product
         // launching Edit Product Screen
@@ -100,7 +104,7 @@ public class AllProductsActivity extends ListActivity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int lastItem = firstVisibleItem + visibleItemCount;
-                if ((lastItem == totalItemCount) && (totalItemCount!=0) && !loadingInfo && MoreInfo) {
+                if ((lastItem == totalItemCount) && (totalItemCount != 0) && !loadingInfo && MoreInfo) {
                     Log.d(String.valueOf(lastItem), "Last Item");
                     new LoadAllProducts().execute(lastItem);
                 }
@@ -131,8 +135,8 @@ public class AllProductsActivity extends ListActivity {
     class LoadAllProducts extends AsyncTask<Integer, String, Integer> {
 
         ArrayList<Product> productsList;
-        View footer = getLayoutInflater().inflate(R.layout.list_footer, null);
-        ListView listView = getListView();
+        ListView lv = getListView();
+        View loadMoreView;
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -142,15 +146,19 @@ public class AllProductsActivity extends ListActivity {
             super.onPreExecute();
 
             loadingInfo = true;
+
             // Hashmap for ListView
             productsList = new ArrayList<Product>();
+
+                //add the footer before adding the adapter, else the footer will not load!
+                loadMoreView = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_footer, null, false);
+                lv.addFooterView(loadMoreView);
 
 //            pDialog = new ProgressDialog(AllProductsActivity.this);
 //            pDialog.setMessage("Loading products. Please wait...");
 //            pDialog.setIndeterminate(false);
 //            pDialog.setCancelable(false);
 //            pDialog.show();
-            listView.addFooterView(footer);
         }
 
         /**
@@ -194,11 +202,11 @@ public class AllProductsActivity extends ListActivity {
                 MoreInfo = false;
             }
             // Simulo tiempo de carga de datos de 3 segundos
-            try {
+            /*try {
                 Thread.sleep(3000);
             }
             catch (Exception e) {
-            }
+            }*/
 
             return start;
         }
@@ -213,18 +221,17 @@ public class AllProductsActivity extends ListActivity {
             runOnUiThread(new Runnable() {
                 public void run() {
                     if (lastItem == 0) {
-                        listView.removeFooterView(footer);
+                        // Init adapter for ListView
                         adapter = new CustomArrayAdapter(AllProductsActivity.this, R.layout.list_item, productsList);
                         setListAdapter(adapter);
                     } else {
-                        listView.removeFooterView(footer);
                         adapter.addAll(productsList);
                     }
                 }
             });
 
+            lv.removeFooterView(loadMoreView);
             loadingInfo = false;
-
         }
     }
 }
