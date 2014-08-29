@@ -52,6 +52,7 @@ public class AllProductsActivity extends ListActivity {
     boolean loadingInfo = false;
     boolean MoreInfo = true;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +131,8 @@ public class AllProductsActivity extends ListActivity {
     class LoadAllProducts extends AsyncTask<Integer, String, Integer> {
 
         ArrayList<Product> productsList;
+        View footer = getLayoutInflater().inflate(R.layout.list_footer, null);
+        ListView listView = getListView();
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -142,11 +145,12 @@ public class AllProductsActivity extends ListActivity {
             // Hashmap for ListView
             productsList = new ArrayList<Product>();
 
-            pDialog = new ProgressDialog(AllProductsActivity.this);
-            pDialog.setMessage("Loading products. Please wait...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();
+//            pDialog = new ProgressDialog(AllProductsActivity.this);
+//            pDialog.setMessage("Loading products. Please wait...");
+//            pDialog.setIndeterminate(false);
+//            pDialog.setCancelable(false);
+//            pDialog.show();
+            listView.addFooterView(footer);
         }
 
         /**
@@ -189,6 +193,12 @@ public class AllProductsActivity extends ListActivity {
                 e.printStackTrace();
                 MoreInfo = false;
             }
+            // Simulo tiempo de carga de datos de 3 segundos
+            try {
+                Thread.sleep(3000);
+            }
+            catch (Exception e) {
+            }
 
             return start;
         }
@@ -198,14 +208,16 @@ public class AllProductsActivity extends ListActivity {
          * **/
         protected void onPostExecute(final Integer lastItem) {
             // dismiss the dialog after getting all products
-            pDialog.dismiss();
+//            pDialog.dismiss();
             // updating UI from Background Thread
             runOnUiThread(new Runnable() {
                 public void run() {
                     if (lastItem == 0) {
+                        listView.removeFooterView(footer);
                         adapter = new CustomArrayAdapter(AllProductsActivity.this, R.layout.list_item, productsList);
                         setListAdapter(adapter);
                     } else {
+                        listView.removeFooterView(footer);
                         adapter.addAll(productsList);
                     }
                 }
