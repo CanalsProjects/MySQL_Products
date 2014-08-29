@@ -2,6 +2,7 @@ package canalsprojects.mysql_products;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
@@ -19,7 +20,8 @@ public class Product {
     private String name;
     private String price;
     private String description;
-    private Bitmap img;
+    private String linkImg;
+    private Drawable img;
 
     private static final String TAG_PID = "pid";
     private static final String TAG_NAME = "name";
@@ -35,7 +37,8 @@ public class Product {
             this.name = obj.getString(TAG_NAME);
             this.price = obj.getString(TAG_PRICE);
             this.description = obj.getString(TAG_DESCRIPTION);
-            new DownloadImageTask().execute(obj.getString(TAG_IMG));
+            this.linkImg = obj.getString(TAG_IMG);
+            this.img = null;
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -57,26 +60,13 @@ public class Product {
         return description;
     }
 
-    public Bitmap getImg() {
+    public String getLinkImg() {
+        return linkImg;
+    }
+
+    public Drawable getImg() {
         return img;
     }
+    public void setImg(Drawable img) { this.img = img; }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            img = result;
-        }
-    }
 }

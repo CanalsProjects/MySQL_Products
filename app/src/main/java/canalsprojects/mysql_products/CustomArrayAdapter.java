@@ -60,7 +60,15 @@ public class CustomArrayAdapter extends ArrayAdapter<Product> {
         viewHolder.name.setText(product.getName());
         viewHolder.price.setText(product.getPrice());
         viewHolder.description.setText(product.getDescription());
-        viewHolder.img.setImageBitmap(product.getImg());
+
+        if (product.getImg() != null){
+            viewHolder.img.setImageDrawable(product.getImg());
+        } else {
+            new DownloadImageTask(viewHolder.img).execute(product.getLinkImg());
+            product.setImg(viewHolder.img.getDrawable());
+        }
+
+
         // Return the completed view to render on screen
         return convertView;
     }

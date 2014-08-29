@@ -6,7 +6,6 @@ package canalsprojects.mysql_products;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -15,14 +14,18 @@ import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -59,6 +62,10 @@ public class AllProductsActivity extends ListActivity {
 
         // Get listview
         ListView lv = getListView();
+
+        //add the footer before adding the adapter, else the footer will not load!
+        //View footerView = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.footer, null, false);
+        //lv.addFooterView(footerView);
 
         // on seleting single product
         // launching Edit Product Screen
