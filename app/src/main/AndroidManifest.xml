@@ -28,6 +28,7 @@
 
         <!-- All Product Activity -->
         <activity
+            android:launchMode="singleTop"
             android:name=".AllProductsActivity"
             android:label="All Products" >
             <intent-filter>

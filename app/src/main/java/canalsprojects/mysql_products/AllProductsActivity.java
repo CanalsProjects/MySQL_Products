@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -32,11 +33,12 @@ import android.widget.TextView;
 public class AllProductsActivity extends ListActivity {
 
     // Progress Dialog
-    private ProgressDialog pDialog;
+    //private ProgressDialog pDialog;
 
     // Creating JSON Parser object
-    JSONParser jParser = new JSONParser();
-    CustomArrayAdapter adapter;
+    private JSONParser jParser = new JSONParser();
+    private CustomArrayAdapter adapter = null;
+    private SearchView search;
 
     // url to get all products list
     private static String url_all_products = "http://bd.mumus.es/get_all_products.php";
@@ -48,10 +50,11 @@ public class AllProductsActivity extends ListActivity {
     private static final String TAG_END = "end";
 
     // products JSONArray
-    JSONArray products = null;
-    boolean loadingInfo = false;
-    boolean MoreInfo = true;
-    String query;
+    private JSONArray products = null;
+    private boolean loadingInfo = false;
+    private boolean MoreInfo = true;
+    String query = "";
+    String query2 = "";
 
 
     @Override
@@ -60,13 +63,12 @@ public class AllProductsActivity extends ListActivity {
         setContentView(R.layout.all_products);
 
         // Get the intent, verify the action and get the query
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             Log.d("Query:", query);
             this.query = query;
-            //doMySearch(query);
-        }
+        }*/
 
         // Loading products in List view
         new LoadAllProducts(query).execute(0);
@@ -117,6 +119,35 @@ public class AllProductsActivity extends ListActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        search = (SearchView) menu.findItem(R.id.search).getActionView();
+        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+        search.setSubmitButtonEnabled(true);
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String q) {
+                Log.d("Query",q);
+                query = q;
+                search.onActionViewCollapsed();
+                adapter.clear();
+                new LoadAllProducts(q).execute(0);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                return false;
+            }
+        });
+        return true;
+    }
+
     // Response from Edit Product Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -163,11 +194,6 @@ public class AllProductsActivity extends ListActivity {
                 loadMoreView = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_footer, null, false);
                 lv.addFooterView(loadMoreView);
 
-//            pDialog = new ProgressDialog(AllProductsActivity.this);
-//            pDialog.setMessage("Loading products. Please wait...");
-//            pDialog.setIndeterminate(false);
-//            pDialog.setCancelable(false);
-//            pDialog.show();
         }
 
         /**
@@ -211,12 +237,6 @@ public class AllProductsActivity extends ListActivity {
                 e.printStackTrace();
                 MoreInfo = false;
             }
-            // Simulo tiempo de carga de datos de 3 segundos
-            /*try {
-                Thread.sleep(3000);
-            }
-            catch (Exception e) {
-            }*/
 
             return start;
         }
@@ -243,30 +263,6 @@ public class AllProductsActivity extends ListActivity {
             lv.removeFooterView(loadMoreView);
             loadingInfo = false;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.search_menu, menu);
-
-        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView search = (SearchView) menu.findItem(R.id.search).getActionView();
-        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
-        /*search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                //Log.d("Query",query);
-                return true;
-            }
-        });*/
-        return true;
     }
 
 }
