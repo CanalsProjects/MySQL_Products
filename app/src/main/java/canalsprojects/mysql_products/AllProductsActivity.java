@@ -147,9 +147,9 @@ public class AllProductsActivity extends ListActivity {
                 sort = position;
                 if (adapter != null) {
                     adapter.clear();
+                    MoreInfo = true;
                     new LoadAllProducts(query).execute(0, sort, typeSort);
                 }
-                //SortListVier(sort, typeSort);
             }
 
             @Override
@@ -171,9 +171,9 @@ public class AllProductsActivity extends ListActivity {
                 typeSort = position;
                 if (adapter != null) {
                     adapter.clear();
+                    MoreInfo = true;
                     new LoadAllProducts(query).execute(0, sort, typeSort);
                 }
-                //SortListVier(sort, typeSort);
             }
 
             @Override
@@ -181,26 +181,6 @@ public class AllProductsActivity extends ListActivity {
 
             }
         });
-    }
-
-    private void SortListVier(int sort, int typeSort) {
-        if (adapter == null) return;
-        switch (sort){
-            case 0:
-                if (typeSort == 0) {
-                    adapter.sort(PriceAscComparator);
-                } else if (typeSort == 1) {
-                    adapter.sort(NameAscComparator);
-                }
-                break;
-            case 1:
-                if (typeSort == 0) {
-                    adapter.sort(PriceDescComparator);
-                } else if (typeSort == 1) {
-                    adapter.sort(NameDescComparator);
-                }
-                break;
-        }
     }
 
     @Override
@@ -220,6 +200,7 @@ public class AllProductsActivity extends ListActivity {
                 query = q;
                 search.onActionViewCollapsed();
                 adapter.clear();
+                MoreInfo = true;
                 new LoadAllProducts(q).execute(0, sort, typeSort);
                 return true;
             }
