@@ -7,5 +7,14 @@
     <string name="search">canalsprojects</string>
     <string name="app_label">Search Product</string>
     <string name="search_hint">Search ...</string>
+    <string-array name="sort_list">
+        <item>Price</item>
+        <item>Name</item>
+    </string-array>
+
+    <string-array name="type_sort_list">
+        <item>Asc</item>
+        <item>Desc</item>
+    </string-array>
 
 </resources>
