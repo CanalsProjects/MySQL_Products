@@ -31,7 +31,7 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class AllProductsActivity extends ListActivity {
+public class SearchActivity extends ListActivity {
 
     private JSONParser jParser;
     private CustomArrayAdapter adapter;
@@ -54,7 +54,7 @@ public class AllProductsActivity extends ListActivity {
     private int sort;
     private int typeSort;
 
-    public AllProductsActivity() {
+    public SearchActivity() {
         jParser = new JSONParser();
         adapter = null;
         typeSort = 0;
@@ -67,7 +67,7 @@ public class AllProductsActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.all_products);
+        setContentView(R.layout.search_products);
 
         restoreSaveData(savedInstanceState);
         setupSpinners();
@@ -85,9 +85,11 @@ public class AllProductsActivity extends ListActivity {
     }
 
     private void setupListView() {
-
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        String q = bundle.getString("SearchText");
         // Loading products in List view
-        new LoadAllProducts(query).execute(0, sort, typeSort);
+        new LoadSearchedProducts(q).execute(0, sort, typeSort);
 
         // Get listview
         ListView lv = getListView();
@@ -100,8 +102,7 @@ public class AllProductsActivity extends ListActivity {
         lv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // getting values from selected ListItem
                 String pid = ((TextView) view.findViewById(R.id.pid)).getText()
                         .toString();
@@ -128,7 +129,7 @@ public class AllProductsActivity extends ListActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int lastItem = firstVisibleItem + visibleItemCount;
                 if ((lastItem == totalItemCount) && (totalItemCount != 0) && !loadingInfo && MoreInfo) {
-                    new LoadAllProducts(query).execute(lastItem, sort, typeSort);
+                    new LoadSearchedProducts(query).execute(lastItem, sort, typeSort);
                 }
             }
         });
@@ -151,19 +152,17 @@ public class AllProductsActivity extends ListActivity {
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 sort = position;
                 if (adapter != null) {
                     adapter.clear();
                     MoreInfo = true;
-                    new LoadAllProducts(query).execute(0, sort, typeSort);
+                    new LoadSearchedProducts(query).execute(0, sort, typeSort);
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-
             }
         });
 
@@ -175,19 +174,17 @@ public class AllProductsActivity extends ListActivity {
         spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 typeSort = position;
                 if (adapter != null) {
                     adapter.clear();
                     MoreInfo = true;
-                    new LoadAllProducts(query).execute(0, sort, typeSort);
+                    new LoadSearchedProducts(query).execute(0, sort, typeSort);
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-
             }
         });
     }
@@ -218,7 +215,7 @@ public class AllProductsActivity extends ListActivity {
                 search.onActionViewCollapsed();
                 adapter.clear();
                 MoreInfo = true;
-                new LoadAllProducts(q).execute(0, sort, typeSort);
+                new LoadSearchedProducts(q).execute(0, sort, typeSort);
                 return true;
             }
 
@@ -243,26 +240,22 @@ public class AllProductsActivity extends ListActivity {
             finish();
             startActivity(intent);
         }
-
     }
 
     /**
      * Background Async Task to Load all product by making HTTP Request
      * */
-    private class LoadAllProducts extends AsyncTask<Integer, String, Integer> {
+    private class LoadSearchedProducts extends AsyncTask<Integer, String, Integer> {
 
         String query;
         ArrayList<Product> productsList;
         ListView lv = getListView();
         View loadMoreView;
 
-        public LoadAllProducts(String query) {
+        public LoadSearchedProducts(String query) {
             this.query = query;
         }
 
-        /**
-         * Before starting background thread Show Progress Dialog
-         * */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -283,7 +276,7 @@ public class AllProductsActivity extends ListActivity {
         protected Integer doInBackground(Integer... args) {
             // Building Parameters
             int start = args[0];
-            int end = start+10;
+            int end = start + 10;
 
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair(TAG_START, args[0].toString()));
@@ -334,14 +327,13 @@ public class AllProductsActivity extends ListActivity {
                 public void run() {
                     if (lastItem == 0) {
                         // Init adapter for ListView
-                        adapter = new CustomArrayAdapter(AllProductsActivity.this, R.layout.list_item, productsList);
+                        adapter = new CustomArrayAdapter(SearchActivity.this, R.layout.list_item, productsList);
                         setListAdapter(adapter);
                     } else {
                         adapter.addAll(productsList);
                     }
                 }
             });
-
             lv.removeFooterView(loadMoreView);
             loadingInfo = false;
         }
@@ -382,6 +374,4 @@ public class AllProductsActivity extends ListActivity {
             return name2.compareToIgnoreCase(name1);
         }
     };
-
-
 }

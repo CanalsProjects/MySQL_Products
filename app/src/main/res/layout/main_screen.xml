@@ -1,23 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="fill_parent"
-android:layout_height="fill_parent"
-android:orientation="vertical"
-android:gravity="center_horizontal">
 
-<!--  Sample Dashboard screen with Two buttons -->
-<!--  Button to view all products screen -->
-<Button android:id="@+id/btnViewProducts"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="View Products"
-    android:layout_marginTop="25dip"/>
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
-<!--  Button to create a new product screen -->
-<Button android:id="@+id/btnCreateProduct"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="Add New Products"
-    android:layout_marginTop="25dip"/>
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/orderBy"
+        android:layout_toEndOf="@+id/orderBy"
+        style="@style/AppTheme" />
 
-</LinearLayout>
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/spinner" />
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/spinner" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/orderby"
+        android:id="@+id/orderBy"
+        android:layout_above="@android:id/list"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_margin="5dp" />
+
+</RelativeLayout>
