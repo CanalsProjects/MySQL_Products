@@ -1,15 +1,8 @@
-package canalsprojects.mysql_products;
+package canalsprojects.definitions;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.widget.ImageView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.InputStream;
 
 /**
  * Created by knals on 28/08/2014.

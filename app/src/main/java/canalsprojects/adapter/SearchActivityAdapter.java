@@ -1,7 +1,10 @@
-package canalsprojects.mysql_products;
+package canalsprojects.adapter;
 
 /**
- * Created by knals on 27/08/2014.
+ *
+ *
+ *
+ *
  */
 
 import android.content.Context;
@@ -14,7 +17,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class CustomArrayAdapter extends ArrayAdapter<Product> {
+import canalsprojects.utils.DownloadImageTask;
+import canalsprojects.avtivitys.R;
+import canalsprojects.definitions.Product;
+
+public class SearchActivityAdapter extends ArrayAdapter<Product> {
 
     private LayoutInflater inflater;
     private int resource;
@@ -28,7 +35,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Product> {
         ImageView img;
     }
 
-    public CustomArrayAdapter(Context context, int resource, ArrayList<Product> products) {
+    public SearchActivityAdapter(Context context, int resource, ArrayList<Product> products) {
         super(context, resource, products);
         this.resource = resource;
     }
@@ -36,14 +43,14 @@ public class CustomArrayAdapter extends ArrayAdapter<Product> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        Product product = (Product) this.getItem(position);
+        Product product = this.getItem(position);
 
-        ViewHolder viewHolder; // view lookup cache stored in tag
+        // view lookup cache stored in tag
+        ViewHolder viewHolder;
         if (inflater == null)
             inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
             convertView = inflater.inflate(resource, null);
-
             viewHolder = new ViewHolder();
             viewHolder.pid = (TextView) convertView.findViewById(R.id.pid);
             viewHolder.name = (TextView) convertView.findViewById(R.id.name);
@@ -67,7 +74,6 @@ public class CustomArrayAdapter extends ArrayAdapter<Product> {
             new DownloadImageTask(viewHolder.img).execute(product.getLinkImg());
             product.setImg(viewHolder.img.getDrawable());
         }
-
 
         // Return the completed view to render on screen
         return convertView;

@@ -1,4 +1,4 @@
-package canalsprojects.mysql_products;
+package canalsprojects.webserver;
 
 /**
  * Created by lluis on 26/08/2014.
@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -21,14 +20,13 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.util.Log;
 
 public class JSONParser {
 
-    static InputStream is = null;
-    static JSONObject jObj = null;
-    static String json = "";
+    private static InputStream inputStream = null;
+    private static JSONObject jObject = null;
+    private static String json = "";
 
     // constructor
     public JSONParser() {
@@ -44,7 +42,7 @@ public class JSONParser {
         try {
 
             // check for request method
-            if(method == "POST"){
+            if(method.equals("POST")){
                 // request method is POST
                 // defaultHttpClient
                 DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -53,9 +51,9 @@ public class JSONParser {
 
                 HttpResponse httpResponse = httpClient.execute(httpPost);
                 HttpEntity httpEntity = httpResponse.getEntity();
-                is = httpEntity.getContent();
+                inputStream = httpEntity.getContent();
 
-            }else if(method == "GET"){
+            }else if(method.equals("GET")){
                 // request method is GET
                 DefaultHttpClient httpClient = new DefaultHttpClient();
                 String paramString = URLEncodedUtils.format(params, "UTF-8");
@@ -64,7 +62,7 @@ public class JSONParser {
 
                 HttpResponse httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
-                is = httpEntity.getContent();
+                inputStream = httpEntity.getContent();
             }
 
         } catch (UnsupportedEncodingException e) {
@@ -77,13 +75,13 @@ public class JSONParser {
 
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, "iso-8859-1"), 8);
+                    inputStream, "iso-8859-1"), 8);
             StringBuilder sb = new StringBuilder();
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
             }
-            is.close();
+            inputStream.close();
             json = sb.toString();
         } catch (Exception e) {
             Log.e("Buffer Error", "Error converting result " + e.toString());
@@ -91,13 +89,13 @@ public class JSONParser {
 
         // try parse the string to a JSON object
         try {
-            jObj = new JSONObject(json);
+            jObject = new JSONObject(json);
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
         }
 
         // return JSON String
-        return jObj;
+        return jObject;
 
     }
 }

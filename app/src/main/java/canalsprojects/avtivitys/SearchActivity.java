@@ -1,62 +1,70 @@
-package canalsprojects.mysql_products;
+package canalsprojects.avtivitys;
 
+/**
+ * Created by lluis on 26/08/2014.
+ */
+
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.content.Intent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import canalsprojects.adapter.SearchActivityAdapter;
+import canalsprojects.definitions.Product;
+import canalsprojects.definitions.Sort;
+import canalsprojects.definitions.TypeSort;
+import canalsprojects.webserver.JSONParser;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-
-public class MainScreenActivity extends ListActivity {
+public class SearchActivity extends ListActivity {
 
     private JSONParser jParser;
-    private CustomArrayAdapter adapter;
-    private SearchView search;
+    private SearchActivityAdapter searchActivityAdapter;
+    private SearchView searchView;
 
-    // url to get all products list
-    private static String url_all_products = "http://bd.mumus.es/get_all_products.php";
+    // url to get search products list
+    private static final String url_all_products = "http://bd.mumus.es/get_all_products.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_PRODUCTS = "products";
     private static final String TAG_START = "start";
     private static final String TAG_END = "end";
+    private static final String TAG_QUERY = "q";
     private static final String TAG_SORT = "sort";
     private static final String TAG_TSORT = "tsort";
 
     private boolean loadingInfo;
     private boolean MoreInfo;
     private String query;
-    private int sort;
-    private int typeSort;
+    private Sort sort;
+    private TypeSort typeSort;
 
-    public MainScreenActivity() {
+    public SearchActivity() {
         jParser = new JSONParser();
-        adapter = null;
-        typeSort = 0;
-        sort = 0;
+        searchActivityAdapter = null;
+        sort = Sort.Price;
+        typeSort = TypeSort.Asc;
         query = "";
         MoreInfo = true;
         loadingInfo = false;
@@ -67,25 +75,35 @@ public class MainScreenActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_products);
 
+        restoreExtras();
         restoreSaveData(savedInstanceState);
         setupSpinners();
         setupListView();
 
     }
 
+    private void restoreExtras(){
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            query = extras.getString("SearchText");
+            getIntent().getExtras().clear();
+        }
+    }
+
     private void restoreSaveData(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             // Restore last state for checked position.
             query = savedInstanceState.getString("query");
-            sort = savedInstanceState.getInt("sort");
-            typeSort = savedInstanceState.getInt("typeSort");
+            sort = Sort.valueOf(savedInstanceState.getString("sort"));
+            typeSort = TypeSort.valueOf(savedInstanceState.getString("typeSort"));
+            savedInstanceState.clear();
         }
     }
 
     private void setupListView() {
 
         // Loading products in List view
-        new LoadAllProducts(query).execute(0, sort, typeSort);
+        new LoadSearchedProducts(query).execute(0, sort.ordinal(), typeSort.ordinal());
 
         // Get listview
         ListView lv = getListView();
@@ -95,13 +113,13 @@ public class MainScreenActivity extends ListActivity {
 
         // on seleting single product
         // launching Edit Product Screen
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // getting values from selected ListItem
-                String pid = ((TextView) view.findViewById(R.id.pid)).getText().toString();
+                String pid = ((TextView) view.findViewById(R.id.pid)).getText()
+                        .toString();
 
                 // Starting new intent
                 Intent in = new Intent(getApplicationContext(),
@@ -125,7 +143,7 @@ public class MainScreenActivity extends ListActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int lastItem = firstVisibleItem + visibleItemCount;
                 if ((lastItem == totalItemCount) && (totalItemCount != 0) && !loadingInfo && MoreInfo) {
-                    new LoadAllProducts(query).execute(lastItem, sort, typeSort);
+                    new LoadSearchedProducts(query).execute(lastItem, sort.ordinal(), typeSort.ordinal());
                 }
             }
         });
@@ -149,11 +167,11 @@ public class MainScreenActivity extends ListActivity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                sort = position;
-                if (adapter != null) {
-                    adapter.clear();
+                sort = Sort.values()[position];
+                if (searchActivityAdapter != null) {
+                    searchActivityAdapter.clear();
                     MoreInfo = true;
-                    new LoadAllProducts(query).execute(0, sort, typeSort);
+                    new LoadSearchedProducts(query).execute(0, sort.ordinal(), typeSort.ordinal());
                 }
             }
 
@@ -171,11 +189,11 @@ public class MainScreenActivity extends ListActivity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                typeSort = position;
-                if (adapter != null) {
-                    adapter.clear();
+                typeSort = TypeSort.values()[position];
+                if (searchActivityAdapter != null) {
+                    searchActivityAdapter.clear();
                     MoreInfo = true;
-                    new LoadAllProducts(query).execute(0, sort, typeSort);
+                    new LoadSearchedProducts(query).execute(0, sort.ordinal(), typeSort.ordinal());
                 }
             }
 
@@ -189,8 +207,8 @@ public class MainScreenActivity extends ListActivity {
     public void onSaveInstanceState(Bundle stateActivity) {
         super.onSaveInstanceState(stateActivity);
         stateActivity.putString("query", query);
-        stateActivity.putInt("sort", sort);
-        stateActivity.putInt("typeSort", typeSort);
+        stateActivity.putString("sort", sort.toString());
+        stateActivity.putString("typeSort", typeSort.toString());
     }
 
     @Override
@@ -199,23 +217,19 @@ public class MainScreenActivity extends ListActivity {
         getMenuInflater().inflate(R.menu.search_menu, menu);
 
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        search  = (SearchView) menu.findItem(R.id.search).getActionView();
-        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
-        search.setSubmitButtonEnabled(true);
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
             public boolean onQueryTextSubmit(String q) {
-                Intent i = new Intent(getApplicationContext(), SearchActivity.class);
-
-                query = q;
-                i.putExtra("SearchText", q);
                 Log.d("Query", q);
-                search.onActionViewCollapsed();
-                adapter.clear();
+                query = q;
+                searchView.onActionViewCollapsed();
+                searchActivityAdapter.clear();
                 MoreInfo = true;
-                startActivity(i);
-//                new LoadSearchedProducts(q).execute(0, sort, typeSort);
+                new LoadSearchedProducts(q).execute(0, sort.ordinal(), typeSort.ordinal());
                 return true;
             }
 
@@ -245,20 +259,17 @@ public class MainScreenActivity extends ListActivity {
     /**
      * Background Async Task to Load all product by making HTTP Request
      * */
-    private class LoadAllProducts extends AsyncTask<Integer, String, Integer> {
+    private class LoadSearchedProducts extends AsyncTask<Integer, String, Integer> {
 
         String query;
         ArrayList<Product> productsList;
         ListView lv = getListView();
         View loadMoreView;
 
-        public LoadAllProducts(String query) {
+        public LoadSearchedProducts(String query) {
             this.query = query;
         }
 
-        /**
-         * Before starting background thread Show Progress Dialog
-         * */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -284,7 +295,7 @@ public class MainScreenActivity extends ListActivity {
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair(TAG_START, args[0].toString()));
             params.add(new BasicNameValuePair(TAG_END, String.valueOf(end)));
-            params.add(new BasicNameValuePair("q", query));
+            params.add(new BasicNameValuePair(TAG_QUERY, query));
             params.add(new BasicNameValuePair(TAG_SORT, args[1].toString()));
             params.add(new BasicNameValuePair(TAG_TSORT, args[2].toString()));
 
@@ -330,10 +341,10 @@ public class MainScreenActivity extends ListActivity {
                 public void run() {
                     if (lastItem == 0) {
                         // Init adapter for ListView
-                        adapter = new CustomArrayAdapter(MainScreenActivity.this, R.layout.list_item, productsList);
-                        setListAdapter(adapter);
+                        searchActivityAdapter = new SearchActivityAdapter(SearchActivity.this, R.layout.list_item, productsList);
+                        setListAdapter(searchActivityAdapter);
                     } else {
-                        adapter.addAll(productsList);
+                        searchActivityAdapter.addAll(productsList);
                     }
                 }
             });
@@ -342,39 +353,4 @@ public class MainScreenActivity extends ListActivity {
         }
     }
 
-    // Comparator for Ascending Order
-    public static Comparator<Product> PriceAscComparator = new Comparator<Product>() {
-        public int compare(Product p1, Product p2) {
-            float price1 = Float.parseFloat(p1.getPrice());
-            float price2 = Float.parseFloat(p2.getPrice());
-            return Float.compare(price1, price2);
-        }
-    };
-
-    //Comparator for Descending Order
-    public static Comparator<Product> PriceDescComparator = new Comparator<Product>() {
-        public int compare(Product p1, Product p2) {
-            float price1 = Float.parseFloat(p1.getPrice());
-            float price2 = Float.parseFloat(p2.getPrice());
-            return Float.compare(price2, price1);
-        }
-    };
-
-    // Comparator for Ascending Order
-    public static Comparator<Product> NameAscComparator = new Comparator<Product>() {
-        public int compare(Product p1, Product p2) {
-            String name1 = p1.getName();
-            String name2 = p2.getName();
-            return name1.compareToIgnoreCase(name2);
-        }
-    };
-
-    //Comparator for Descending Order
-    public static Comparator<Product> NameDescComparator = new Comparator<Product>() {
-        public int compare(Product p1, Product p2) {
-            String name1 = p1.getName();
-            String name2 = p2.getName();
-            return name2.compareToIgnoreCase(name1);
-        }
-    };
 }

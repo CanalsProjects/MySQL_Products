@@ -10,6 +10,9 @@
     <string name="loading">Loading. Please Wait...</string>
     <string name="orderby">Order by:</string>
     <string name="fail">Fail</string>
+    <string name="fail_connection">No internet connection</string>
+    <string name="try_again">Try Again</string>
+    <string name="products">Products</string>
     <string-array name="sort_list">
         <item>Price</item>
         <item>Name</item>

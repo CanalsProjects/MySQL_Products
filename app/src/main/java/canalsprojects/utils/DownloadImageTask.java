@@ -1,4 +1,4 @@
-package canalsprojects.mysql_products;
+package canalsprojects.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

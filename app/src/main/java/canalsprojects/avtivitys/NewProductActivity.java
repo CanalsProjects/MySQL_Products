@@ -1,4 +1,4 @@
-package canalsprojects.mysql_products;
+package canalsprojects.avtivitys;
 
 /**
  * Created by lluis on 26/08/2014.
@@ -20,6 +20,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import canalsprojects.webserver.JSONParser;
 
 public class NewProductActivity extends Activity {
 

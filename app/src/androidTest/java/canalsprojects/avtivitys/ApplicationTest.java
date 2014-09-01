@@ -1,4 +1,4 @@
-package canalsprojects.mysql_products;
+package canalsprojects.avtivitys;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
