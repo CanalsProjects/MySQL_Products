@@ -7,6 +7,9 @@
     <string name="search">canalsprojects</string>
     <string name="app_label">Search Product</string>
     <string name="search_hint">Search ...</string>
+    <string name="loading">Loading. Please Wait...</string>
+    <string name="orderby">Order by:</string>
+    <string name="fail">Fail</string>
     <string-array name="sort_list">
         <item>Price</item>
         <item>Name</item>

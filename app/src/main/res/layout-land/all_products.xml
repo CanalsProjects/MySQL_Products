@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/orderBy"
-        android:layout_toEndOf="@+id/orderBy"
-        style="@style/AppTheme" />
+        android:layout_toEndOf="@+id/orderBy" />
 
     <Spinner
         android:id="@+id/spinner2"

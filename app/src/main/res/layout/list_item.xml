@@ -18,7 +18,7 @@
         android:layout_height="80dp"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="8dp"
-        android:contentDescription="fail" />
+        android:contentDescription="@string/fail" />
 
     <!-- Name Label -->
     <TextView
@@ -49,6 +49,7 @@
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/thumbnail"
         android:textColor="@color/description"
-        android:textSize="@dimen/description" />
+        android:textSize="@dimen/description"
+        android:lines="1" />
 
 </RelativeLayout>

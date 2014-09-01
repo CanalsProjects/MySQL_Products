@@ -13,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +21,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -35,13 +33,11 @@ import android.widget.TextView;
 
 public class AllProductsActivity extends ListActivity {
 
-    private JSONParser jParser = new JSONParser();
-    private CustomArrayAdapter adapter = null;
+    private JSONParser jParser;
+    private CustomArrayAdapter adapter;
     private SearchView search;
-    private Spinner spinner1;
-    private Spinner spinner2;
 
-    // url to get aljava.lang.Stringl products list
+    // url to get all products list
     private static String url_all_products = "http://bd.mumus.es/get_all_products.php";
 
     // JSON Node names
@@ -52,27 +48,40 @@ public class AllProductsActivity extends ListActivity {
     private static final String TAG_SORT = "sort";
     private static final String TAG_TSORT = "tsort";
 
-    private JSONArray products = null;
-    private boolean loadingInfo = false;
-    private boolean MoreInfo = true;
-    private String query = "";
+    private boolean loadingInfo;
+    private boolean MoreInfo;
+    private String query;
+    private int sort;
+    private int typeSort;
 
-    // Sort
-    private String[] sortList;
-    private String[] typeSortList;
-
-    private int sort = 0;
-    private int typeSort = 0;
-
+    public AllProductsActivity() {
+        jParser = new JSONParser();
+        adapter = null;
+        typeSort = 0;
+        sort = 0;
+        query = "";
+        MoreInfo = true;
+        loadingInfo = false;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.all_products);
 
+        restoreSaveData(savedInstanceState);
         setupSpinners();
         setupListView();
 
+    }
+
+    private void restoreSaveData(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            query = savedInstanceState.getString("query");
+            sort = savedInstanceState.getInt("sort");
+            typeSort = savedInstanceState.getInt("typeSort");
+        }
     }
 
     private void setupListView() {
@@ -128,11 +137,11 @@ public class AllProductsActivity extends ListActivity {
 
     private void setupSpinners() {
 
-        sortList = getResources().getStringArray(R.array.sort_list);
-        typeSortList= getResources().getStringArray(R.array.type_sort_list);
+        String[] sortList = getResources().getStringArray(R.array.sort_list);
+        String[] typeSortList = getResources().getStringArray(R.array.type_sort_list);
 
-        spinner1 = (Spinner) findViewById(R.id.spinner);
-        spinner2 = (Spinner) findViewById(R.id.spinner2);
+        Spinner spinner1 = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, sortList);
@@ -181,6 +190,14 @@ public class AllProductsActivity extends ListActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle stateActivity) {
+        super.onSaveInstanceState(stateActivity);
+        stateActivity.putString("query", query);
+        stateActivity.putInt("sort", sort);
+        stateActivity.putInt("typeSort", typeSort);
     }
 
     @Override
@@ -288,7 +305,7 @@ public class AllProductsActivity extends ListActivity {
                 if (success == 1) {
                     // products found
                     // Getting Array of Products
-                    products = json.getJSONArray(TAG_PRODUCTS);
+                    JSONArray products = json.getJSONArray(TAG_PRODUCTS);
 
                     // looping through All Products
                     for (int i = 0; i < products.length(); i++) {
