@@ -7,29 +7,39 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
+import canalsprojects.definitions.Product;
+
 /**
  * Created by knals on 27/08/2014.
  */
-public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    ImageView bmImage;
+public class DownloadImageTask extends AsyncTask<Product, Void, Bitmap> {
+
+    private static int MaxTextureSize = 2048; /* True for most devices. */
+    public ImageView bmImage;
+    private Product product;
 
     public DownloadImageTask(ImageView bmImage) {
         this.bmImage = bmImage;
     }
 
-    protected Bitmap doInBackground(String... urls) {
-        String urldisplay = urls[0];
+    public Bitmap doInBackground(Product... urls) {
+        product = urls[0];
+        String url = product.getLinkImg();
         Bitmap mIcon11 = null;
         try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
+            InputStream in = new java.net.URL(url).openStream();
             mIcon11 = BitmapFactory.decodeStream(in);
+            in.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return mIcon11;
     }
 
-    protected void onPostExecute(Bitmap result) {
-        bmImage.setImageBitmap(result);
+    public void onPostExecute(Bitmap result) {
+        if(result != null) {
+            bmImage.setImageBitmap(result);
+            product.setImg(bmImage.getDrawable());
+        }
     }
 }

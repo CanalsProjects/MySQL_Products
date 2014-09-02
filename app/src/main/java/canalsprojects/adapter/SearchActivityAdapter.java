@@ -1,10 +1,7 @@
 package canalsprojects.adapter;
 
 /**
- *
- *
- *
- *
+ * Created by knals on 27/08/2014.
  */
 
 import android.content.Context;
@@ -43,14 +40,14 @@ public class SearchActivityAdapter extends ArrayAdapter<Product> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        Product product = this.getItem(position);
+        Product product = (Product) this.getItem(position);
 
-        // view lookup cache stored in tag
-        ViewHolder viewHolder;
+        ViewHolder viewHolder; // view lookup cache stored in tag
         if (inflater == null)
             inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
             convertView = inflater.inflate(resource, null);
+
             viewHolder = new ViewHolder();
             viewHolder.pid = (TextView) convertView.findViewById(R.id.pid);
             viewHolder.name = (TextView) convertView.findViewById(R.id.name);
@@ -71,9 +68,10 @@ public class SearchActivityAdapter extends ArrayAdapter<Product> {
         if (product.getImg() != null){
             viewHolder.img.setImageDrawable(product.getImg());
         } else {
-            new DownloadImageTask(viewHolder.img).execute(product.getLinkImg());
-            product.setImg(viewHolder.img.getDrawable());
+            viewHolder.img.setImageBitmap(null);
+            new DownloadImageTask(viewHolder.img).execute(product);
         }
+
 
         // Return the completed view to render on screen
         return convertView;
