@@ -1,4 +1,4 @@
-package canalsprojects.avtivitys;
+package canalsprojects.activities;
 
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -27,7 +27,7 @@ import canalsprojects.adapter.SearchActivityAdapter;
 import canalsprojects.definitions.Product;
 import canalsprojects.webserver.JSONParser;
 
-import static canalsprojects.avtivitys.R.layout.list_footer;
+import static canalsprojects.activities.R.layout.list_footer;
 
 
 public class MainScreenActivity extends ListActivity {
