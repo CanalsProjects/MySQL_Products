@@ -21,7 +21,7 @@ public class Product {
     private String price;
     private String description;
     private String linkImg;
-    private Drawable img;
+    private ImageView img;
 
     private static final String TAG_PID = "pid";
     private static final String TAG_NAME = "name";
@@ -64,9 +64,11 @@ public class Product {
         return linkImg;
     }
 
-    public Drawable getImg() {
+    public ImageView getImg() {
         return img;
     }
-    public void setImg(Drawable img) { this.img = img; }
+
+    public void setImg(ImageView img) { this.img = img; }
+    //public void setImg(Drawable img) { this.img = img; }
 
 }

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import canalsprojects.utils.DownloadImageTask;
@@ -66,10 +66,12 @@ public class SearchActivityAdapter extends ArrayAdapter<Product> {
         viewHolder.description.setText(product.getDescription());
 
         if (product.getImg() != null){
-            viewHolder.img.setImageDrawable(product.getImg());
+            viewHolder.img = product.getImg();
         } else {
-            viewHolder.img.setImageBitmap(null);
-            new DownloadImageTask(viewHolder.img).execute(product);
+            Picasso.with(getContext()).load(product.getLinkImg()).into(viewHolder.img);
+            product.setImg(viewHolder.img);
+            //viewHolder.img.setImageBitmap();
+            //new DownloadImageTask(viewHolder.img).execute(product);
         }
 
 
