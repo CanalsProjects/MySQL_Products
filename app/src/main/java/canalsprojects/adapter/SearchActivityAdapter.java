@@ -15,7 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import canalsprojects.utils.DownloadImageTask;
-import canalsprojects.avtivitys.R;
+import canalsprojects.activities.R;
 import canalsprojects.definitions.Product;
 
 public class SearchActivityAdapter extends ArrayAdapter<Product> {

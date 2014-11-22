@@ -1,4 +1,4 @@
-package canalsprojects.avtivitys;
+package canalsprojects.activities;
 
 /**
  * Created by lluis on 26/08/2014.
