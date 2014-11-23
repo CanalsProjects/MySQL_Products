@@ -66,14 +66,11 @@ public class SearchActivityAdapter extends ArrayAdapter<Product> {
         viewHolder.description.setText(product.getDescription());
 
         if (product.getImg() != null){
-            viewHolder.img = product.getImg();
+            viewHolder.img.setImageDrawable(product.getImg());
         } else {
             Picasso.with(getContext()).load(product.getLinkImg()).into(viewHolder.img);
-            product.setImg(viewHolder.img);
-            //viewHolder.img.setImageBitmap();
-            //new DownloadImageTask(viewHolder.img).execute(product);
+            product.setImg(viewHolder.img.getDrawable());
         }
-
 
         // Return the completed view to render on screen
         return convertView;

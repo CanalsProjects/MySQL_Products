@@ -5,10 +5,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.InputStream;
 
 /**
@@ -21,7 +19,7 @@ public class Product {
     private String price;
     private String description;
     private String linkImg;
-    private ImageView img;
+    private Drawable img;
 
     private static final String TAG_PID = "pid";
     private static final String TAG_NAME = "name";
@@ -64,11 +62,10 @@ public class Product {
         return linkImg;
     }
 
-    public ImageView getImg() {
+    public Drawable getImg() {
         return img;
     }
 
-    public void setImg(ImageView img) { this.img = img; }
-    //public void setImg(Drawable img) { this.img = img; }
+    public void setImg(Drawable img) { this.img = img; }
 
 }
