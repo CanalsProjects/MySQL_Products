@@ -1,4 +1,4 @@
-package canalsprojects.activities;
+package com.dualion.view;
 
 /**
  * Created by lluis on 26/08/2014.
@@ -30,11 +30,11 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import canalsprojects.adapter.SearchActivityAdapter;
-import canalsprojects.definitions.Product;
-import canalsprojects.definitions.Sort;
-import canalsprojects.definitions.TypeSort;
-import canalsprojects.webserver.JSONParser;
+import com.dualion.adapter.SearchActivityAdapter;
+import com.dualion.model.Product;
+import com.dualion.model.Sort;
+import com.dualion.model.TypeSort;
+import com.dualion.webserver.JSONParser;
 
 public class SearchActivity extends ListActivity {
 
@@ -103,7 +103,7 @@ public class SearchActivity extends ListActivity {
     private void setupListView() {
 
         // Loading products in List view
-        new LoadSearchedProducts(query).execute(0, sort.ordinal(), typeSort.ordinal());
+        //new LoadSearchedProducts(query).execute(0, sort.ordinal(), typeSort.ordinal());
 
         // Get listview
         ListView lv = getListView();
@@ -143,7 +143,7 @@ public class SearchActivity extends ListActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int lastItem = firstVisibleItem + visibleItemCount;
                 if ((lastItem == totalItemCount) && (totalItemCount != 0) && !loadingInfo && MoreInfo) {
-                    new LoadSearchedProducts(query).execute(lastItem, sort.ordinal(), typeSort.ordinal());
+                    //new LoadSearchedProducts(query).execute(lastItem, sort.ordinal(), typeSort.ordinal());
                 }
             }
         });
@@ -171,7 +171,7 @@ public class SearchActivity extends ListActivity {
                 if (searchActivityAdapter != null) {
                     searchActivityAdapter.clear();
                     MoreInfo = true;
-                    new LoadSearchedProducts(query).execute(0, sort.ordinal(), typeSort.ordinal());
+                    //new LoadSearchedProducts(query).execute(0, sort.ordinal(), typeSort.ordinal());
                 }
             }
 
@@ -193,7 +193,7 @@ public class SearchActivity extends ListActivity {
                 if (searchActivityAdapter != null) {
                     searchActivityAdapter.clear();
                     MoreInfo = true;
-                    new LoadSearchedProducts(query).execute(0, sort.ordinal(), typeSort.ordinal());
+                    //new LoadSearchedProducts(query).execute(0, sort.ordinal(), typeSort.ordinal());
                 }
             }
 
@@ -229,7 +229,7 @@ public class SearchActivity extends ListActivity {
                 searchView.onActionViewCollapsed();
                 searchActivityAdapter.clear();
                 MoreInfo = true;
-                new LoadSearchedProducts(q).execute(0, sort.ordinal(), typeSort.ordinal());
+                //new LoadSearchedProducts(q).execute(0, sort.ordinal(), typeSort.ordinal());
                 return true;
             }
 
@@ -259,7 +259,7 @@ public class SearchActivity extends ListActivity {
     /**
      * Background Async Task to Load all product by making HTTP Request
      * */
-    private class LoadSearchedProducts extends AsyncTask<Integer, String, Integer> {
+    /*private class LoadSearchedProducts extends AsyncTask<Integer, String, Integer> {
 
         String query;
         ArrayList<Product> productsList;
@@ -284,9 +284,9 @@ public class SearchActivity extends ListActivity {
             lv.addFooterView(loadMoreView);
         }
 
-        /**
+        *//**
          * getting All products from url
-         * */
+         * *//*
         protected Integer doInBackground(Integer... args) {
             // Building Parameters
             int start = args[0];
@@ -331,9 +331,9 @@ public class SearchActivity extends ListActivity {
             return start;
         }
 
-        /**
+        *//**
          * After completing background task Dismiss the progress dialog
-         * **/
+         * **//*
         protected void onPostExecute(final Integer lastItem) {
 
             // updating UI from Background Thread
@@ -351,6 +351,6 @@ public class SearchActivity extends ListActivity {
             lv.removeFooterView(loadMoreView);
             loadingInfo = false;
         }
-    }
+    }*/
 
 }

@@ -1,4 +1,4 @@
-package canalsprojects.utils;
+package com.dualion.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
-import canalsprojects.definitions.Product;
+import com.dualion.model.Product;
 
 /**
  * Created by knals on 27/08/2014.

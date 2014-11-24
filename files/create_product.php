@@ -7,6 +7,8 @@
  * All product details are read from HTTP Post Request
  */
  
+header('Content-Type: text/html; charset=utf-8');
+ 
 // array for JSON response
 $response = array();
  
@@ -24,6 +26,8 @@ if (isset($_POST['name']) && isset($_POST['price']) && isset($_POST['description
     $db = new DB_CONNECT();
  
     // mysql inserting a new row
+	mysql_query("SET NAMES 'utf8'");
+	mysql_real_escape_string();
     $result = mysql_query("INSERT INTO products(name, price, description) VALUES('$name', '$price', '$description')");
  
     // check if row inserted or not

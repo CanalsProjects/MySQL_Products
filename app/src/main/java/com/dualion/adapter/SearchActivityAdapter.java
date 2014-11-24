@@ -1,4 +1,4 @@
-package canalsprojects.adapter;
+package com.dualion.adapter;
 
 /**
  * Created by knals on 27/08/2014.
@@ -14,9 +14,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
-import canalsprojects.utils.DownloadImageTask;
-import canalsprojects.activities.R;
-import canalsprojects.definitions.Product;
+import com.dualion.view.R;
+import com.dualion.model.Product;
 
 public class SearchActivityAdapter extends ArrayAdapter<Product> {
 

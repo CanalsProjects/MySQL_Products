@@ -7,6 +7,8 @@
  * A product is identified by product id (pid)
  */
  
+ header('Content-Type: text/html; charset=utf-8');
+ 
 // array for JSON response
 $response = array();
  
@@ -25,6 +27,7 @@ if (isset($_POST['pid']) && isset($_POST['name']) && isset($_POST['price']) && i
     $db = new DB_CONNECT();
  
     // mysql update row with matched pid
+	mysql_query("SET NAMES 'utf8'");
     $result = mysql_query("UPDATE products SET name = '$name', price = '$price', description = '$description' WHERE pid = $pid");
  
     // check if row inserted or not

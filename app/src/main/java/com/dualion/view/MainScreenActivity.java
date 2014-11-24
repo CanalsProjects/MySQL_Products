@@ -1,11 +1,9 @@
-package canalsprojects.activities;
+package com.dualion.view;
 
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.content.Intent;
@@ -15,41 +13,46 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+//import org.json.JSONArray;
+//import org.json.JSONException;
+//import org.json.JSONObject;
+
+import com.dualion.adapter.SearchActivityAdapter;
+import com.dualion.model.Product;
+import com.dualion.model.ProductList;
+import com.dualion.utils.RestProduct;
+import com.dualion.webserver.JSONParser;
+import com.dualion.webserver.ProductService;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import canalsprojects.adapter.SearchActivityAdapter;
-import canalsprojects.definitions.Product;
-import canalsprojects.webserver.JSONParser;
-
-import static canalsprojects.activities.R.layout.list_footer;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class MainScreenActivity extends ListActivity {
 
-    private JSONParser jParser;
+    //private JSONParser jParser;
     private SearchActivityAdapter adapter;
     private SearchView search;
+    ProductService productService;
 
     // url to get all products list
     private static String url_all_products = "http://bd.mumus.es/get_all_products.php";
 
     // JSON Node names
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_PRODUCTS = "products";
-    private static final String TAG_START = "start";
-    private static final String TAG_END = "end";
+//    private static final String TAG_SUCCESS = "success";
+//    private static final String TAG_PRODUCTS = "products";
+//    private static final String TAG_START = "start";
+//    private static final String TAG_END = "end";
 
     private boolean loadingInfo;
     private boolean MoreInfo;
 
     public MainScreenActivity() {
-        jParser = new JSONParser();
+        //jParser = new JSONParser();
         adapter = null;
         MoreInfo = true;
         loadingInfo = false;
@@ -65,8 +68,33 @@ public class MainScreenActivity extends ListActivity {
 
     private void setupListView() {
 
+        //new LoadAllProducts().execute(0);
+
         // Loading products in List view
-        new LoadAllProducts().execute(0);
+        loadingInfo = true;
+        RestProduct restProduct = new RestProduct();
+        productService = restProduct.getService();
+        productService.getLimitProductList(0, 10, new Callback<ProductList>() {
+            ListView lv = getListView();
+            View loadMoreView;
+
+            @Override
+            public void success(ProductList productList, Response response) {
+                //loadMoreView = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(list_footer, null);
+                //lv.addFooterView(loadMoreView);
+                adapter = new SearchActivityAdapter(MainScreenActivity.this, R.layout.list_item, (ArrayList<Product>) productList.getProducts());
+                setListAdapter(adapter);
+                //lv.removeFooterView(loadMoreView);
+                //adapter.addAll(productsList);
+                loadingInfo = false;
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                loadingInfo = false;
+                retrofitError.getResponse();
+            }
+        });
 
         // Get listview
         ListView lv = getListView();
@@ -106,7 +134,26 @@ public class MainScreenActivity extends ListActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int lastItem = firstVisibleItem + visibleItemCount;
                 if ((lastItem == totalItemCount) && (totalItemCount != 0) && !loadingInfo && MoreInfo) {
-                    new LoadAllProducts().execute(lastItem);
+                    //new LoadAllProducts().execute(lastItem);
+
+                    //loadMoreView = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(list_footer, null);
+                    //lv.addFooterView(loadMoreView);
+                    productService.getLimitProductList(lastItem, lastItem+10, new Callback<ProductList>() {
+                        ListView lv = getListView();
+                        View loadMoreView;
+
+                        @Override
+                        public void success(ProductList productList, Response response) {
+                            adapter.addAll(productList.getProducts());
+                            //lv.removeFooterView(loadMoreView);
+                            loadingInfo = false;
+                        }
+
+                        @Override
+                        public void failure(RetrofitError retrofitError) {
+                            loadingInfo = false;
+                        }
+                    });
                 }
             }
         });
@@ -158,15 +205,15 @@ public class MainScreenActivity extends ListActivity {
     /**
      * Background Async Task to Load all product by making HTTP Request
      * */
-    private class LoadAllProducts extends AsyncTask<Integer, String, Integer> {
+    /*private class LoadAllProducts extends AsyncTask<Integer, String, Integer> {
 
         ArrayList<Product> productsList;
         ListView lv = getListView();
         View loadMoreView;
 
-        /**
+        *//**
          * Before starting background thread Show Progress Dialog
-         * */
+         * *//*
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -181,9 +228,9 @@ public class MainScreenActivity extends ListActivity {
             lv.addFooterView(loadMoreView);
         }
 
-        /**
+        *//**
          * getting All products from url
-         * */
+         * *//*
         protected Integer doInBackground(Integer... args) {
             // Building Parameters
             int start = args[0];
@@ -225,9 +272,9 @@ public class MainScreenActivity extends ListActivity {
             return start;
         }
 
-        /**
+        *//**
          * After completing background task Dismiss the progress dialog
-         * **/
+         * **//*
         protected void onPostExecute(final Integer lastItem) {
 
             // updating UI from Background Thread
@@ -245,6 +292,6 @@ public class MainScreenActivity extends ListActivity {
             lv.removeFooterView(loadMoreView);
             loadingInfo = false;
         }
-    }
+    }*/
 
 }

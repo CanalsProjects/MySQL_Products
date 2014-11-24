@@ -7,6 +7,8 @@
  * A product is identified by product id (pid)
  */
  
+ header('Content-Type: text/html; charset=utf-8');
+ 
 // array for JSON response
 $response = array();
  
@@ -21,6 +23,7 @@ if (isset($_GET["pid"])) {
     $pid = $_GET['pid'];
  
     // get a product from products table
+	mysql_query("SET NAMES 'utf8'");
     $result = mysql_query("SELECT * FROM products WHERE pid = $pid");
  
     if (!empty($result)) {

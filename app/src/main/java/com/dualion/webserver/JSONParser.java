@@ -1,4 +1,4 @@
-package canalsprojects.webserver;
+package com.dualion.webserver;
 
 /**
  * Created by lluis on 26/08/2014.

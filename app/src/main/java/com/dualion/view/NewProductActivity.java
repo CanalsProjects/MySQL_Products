@@ -1,4 +1,4 @@
-package canalsprojects.activities;
+package com.dualion.view;
 
 /**
  * Created by lluis on 26/08/2014.
@@ -21,7 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import canalsprojects.webserver.JSONParser;
+import com.dualion.webserver.JSONParser;
 
 public class NewProductActivity extends Activity {
 
