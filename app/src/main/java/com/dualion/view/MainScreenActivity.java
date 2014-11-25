@@ -85,7 +85,14 @@ public class MainScreenActivity extends ListActivity {
                 adapter = new SearchActivityAdapter(MainScreenActivity.this, R.layout.list_item, (ArrayList<Product>) productList.getProducts());
                 setListAdapter(adapter);
                 //lv.removeFooterView(loadMoreView);
-                //adapter.addAll(productsList);
+
+                if (productList.getSuccess() != 0) {
+                    adapter = new SearchActivityAdapter(MainScreenActivity.this, R.layout.list_item, (ArrayList<Product>) productList.getProducts());
+                    setListAdapter(adapter);
+                }else{
+                    MoreInfo = false;
+                }
+
                 loadingInfo = false;
             }
 
@@ -93,6 +100,7 @@ public class MainScreenActivity extends ListActivity {
             public void failure(RetrofitError retrofitError) {
                 loadingInfo = false;
                 retrofitError.getResponse();
+                MoreInfo = false;
             }
         });
 
@@ -139,19 +147,26 @@ public class MainScreenActivity extends ListActivity {
                     //loadMoreView = ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(list_footer, null);
                     //lv.addFooterView(loadMoreView);
                     productService.getLimitProductList(lastItem, lastItem+10, new Callback<ProductList>() {
-                        ListView lv = getListView();
-                        View loadMoreView;
+                        //ListView lv = getListView();
+                        //View loadMoreView;
 
                         @Override
                         public void success(ProductList productList, Response response) {
-                            adapter.addAll(productList.getProducts());
+
                             //lv.removeFooterView(loadMoreView);
+
+                            if (productList.getSuccess() != 0) {
+                                adapter.addAll(productList.getProducts());
+                            }else{
+                                MoreInfo = false;
+                            }
                             loadingInfo = false;
                         }
 
                         @Override
                         public void failure(RetrofitError retrofitError) {
                             loadingInfo = false;
+                            MoreInfo = false;
                         }
                     });
                 }

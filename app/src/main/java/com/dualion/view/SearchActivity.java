@@ -317,8 +317,8 @@ public class SearchActivity extends ListActivity {
                     // looping through All Products
                     for (int i = 0; i < products.length(); i++) {
                         JSONObject c = products.getJSONObject(i);
-                        Product product = new Product(c);
-                        productsList.add(product);
+                        //Product product = new Product(c);
+                        //productsList.add(product);
                     }
                 } else {
                     MoreInfo = false;

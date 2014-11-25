@@ -1,5 +1,6 @@
 package com.dualion.utils;
 
+import com.dualion.adapter.ProductTypeAdapter;
 import com.dualion.model.ProductList;
 import com.dualion.webserver.ProductService;
 import com.google.gson.Gson;
@@ -16,13 +17,13 @@ public class RestProduct {
 
     public RestProduct()
     {
-         /*gson = new GsonBuilder()
-                .registerTypeAdapter(ProductList.class,new DateTypeAdapter())
-                .create();*/
+         gson = new GsonBuilder()
+                .registerTypeAdapter(ProductList.class,new ProductTypeAdapter())
+                .create();
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(BASE_URL)
-                //.setConverter(new GsonConverter(gson))
+                .setConverter(new GsonConverter(gson))
                 .build();
 
         service = restAdapter.create(ProductService.class);
