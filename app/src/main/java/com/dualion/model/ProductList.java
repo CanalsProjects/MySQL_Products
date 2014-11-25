@@ -1,12 +1,22 @@
 package com.dualion.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductList {
 
+    @Expose
+    @SerializedName("products")
     private List<Product> products = new ArrayList<Product>();
+
+    @Expose
+    @SerializedName("success")
     private Integer success;
+
+    @Expose
+    @SerializedName("message")
     private String message;
 
     public List<Product> getProducts() {

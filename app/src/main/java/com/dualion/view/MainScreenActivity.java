@@ -40,7 +40,7 @@ public class MainScreenActivity extends ListActivity {
     ProductService productService;
 
     // url to get all products list
-    private static String url_all_products = "http://bd.mumus.es/get_all_products.php";
+    //private static String url_all_products = "http://bd.mumus.es/get_all_products.php";
 
     // JSON Node names
 //    private static final String TAG_SUCCESS = "success";

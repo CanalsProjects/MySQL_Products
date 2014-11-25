@@ -18,7 +18,8 @@ public class RestProduct {
     public RestProduct()
     {
          gson = new GsonBuilder()
-                .registerTypeAdapter(ProductList.class,new ProductTypeAdapter())
+                //.registerTypeAdapter(ProductList.class,new ProductTypeAdapter()).
+                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
 
         RestAdapter restAdapter = new RestAdapter.Builder()

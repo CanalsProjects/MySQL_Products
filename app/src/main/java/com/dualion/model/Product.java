@@ -1,46 +1,36 @@
 package com.dualion.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import android.graphics.drawable.Drawable;
 
-//import org.json.JSONException;
-//import org.json.JSONObject;
-
 public class Product {
 
-    /*private static final String TAG_PID = "pid";
-    private static final String TAG_NAME = "name";
-    private static final String TAG_IMG = "img";
-    private static final String TAG_PRICE = "price";
-    private static final String TAG_DESCRIPTION = "description";*/
-
+    @SerializedName("pid")
+    @Expose
     private String pid;
 
+    @SerializedName("name")
+    @Expose
     private String name;
 
+    @SerializedName("price")
+    @Expose
     private String price;
 
+    @SerializedName("description")
+    @Expose
     private String description;
 
     @SerializedName("img")
+    @Expose
     private String linkImg;
 
     private Drawable img;
 
-//    public Product(JSONObject obj) {
-//
-//        try {
-//            // Storing each json item in variable
-//            this.pid = obj.getString(TAG_PID);
-//            this.name = obj.getString(TAG_NAME);
-//            this.price = obj.getString(TAG_PRICE);
-//            this.description = obj.getString(TAG_DESCRIPTION);
-//            this.linkImg = obj.getString(TAG_IMG);
-//            this.img = null;
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public Product() {
+
+    }
 
     public String getPid() {
         return pid;
